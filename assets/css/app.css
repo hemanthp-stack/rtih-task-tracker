@@ -925,12 +925,12 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   10. Modals & Forms
+   10. Modals & Forms (Scroll & Viewport Fixed)
    -------------------------------------------------------------------------- */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.6);
+  background-color: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(4px);
   z-index: 50;
   display: flex;
@@ -940,6 +940,8 @@ body {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease, visibility 0.2s ease;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-overlay.is-active {
@@ -953,18 +955,31 @@ body {
   box-shadow: var(--shadow-xl);
   max-width: 540px;
   width: 100%;
-  max-height: 90vh;
+  max-height: calc(100vh - 2.5rem);
   display: flex;
   flex-direction: column;
   transform: translateY(15px);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   border: 1px solid var(--border-light);
+  margin: auto;
 }
 
 .modal-overlay.is-active .modal-dialog { transform: translateY(0); }
 
+/* Ensure the form inside modal-dialog stretches and flexes properly */
+.modal-dialog > form {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 2.5rem);
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
+}
+
 .modal-header {
+  flex-shrink: 0;
   padding: 1.15rem 1.35rem;
   border-bottom: 1px solid var(--border-light);
   display: flex;
@@ -993,9 +1008,28 @@ body {
 .modal-body {
   padding: 1.35rem;
   overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Elegant scrollbar for modal body */
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modal-body::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 9999px;
+}
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 .modal-footer {
+  flex-shrink: 0;
   padding: 0.875rem 1.35rem;
   background: var(--bg-subtle);
   border-top: 1px solid var(--border-light);
@@ -1003,6 +1037,28 @@ body {
   align-items: center;
   justify-content: flex-end;
   gap: 0.65rem;
+}
+
+/* Responsive modal behavior on mobile/short screens */
+@media (max-height: 720px), (max-width: 640px) {
+  .modal-overlay {
+    align-items: flex-start;
+    padding: 1rem 0.75rem;
+  }
+  .modal-dialog {
+    max-height: none;
+    height: auto;
+    margin: auto 0;
+  }
+  .modal-dialog > form {
+    max-height: none;
+    height: auto;
+    overflow: visible;
+  }
+  .modal-body {
+    max-height: none;
+    overflow: visible;
+  }
 }
 
 .form-group { margin-bottom: 1.15rem; }

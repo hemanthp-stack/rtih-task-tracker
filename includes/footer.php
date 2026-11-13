@@ -91,7 +91,7 @@ require_once __DIR__ . '/../includes/flash.php';
 
                 <div class="form-group">
                     <label class="form-label" for="editTaskDesc">Description</label>
-                    <textarea name="description" id="editTaskDesc" class="form-control" rows="4" placeholder="Add additional details or notes..."></textarea>
+                    <textarea name="description" id="editTaskDesc" class="form-control" rows="3" placeholder="Add additional details or notes..."></textarea>
                 </div>
 
                 <div class="form-row">
