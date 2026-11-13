@@ -186,9 +186,8 @@ require_once __DIR__ . '/../includes/flash.php';
                 <span style="display:inline-block; margin-left:0.5rem; color:var(--text-subtle);">&bull;</span>
                 <span style="margin-left:0.5rem;">Professional Technical Work</span>
             </div>
-            <div style="display:flex; align-items:center; gap:0.5rem;">
+            <div style="display:flex; align-items:center;" title="Operational">
                 <span class="badge-dot" style="background:#10b981;"></span>
-                <span>System Operational &bull; 2 Classic Themes</span>
             </div>
         </div>
     </div>

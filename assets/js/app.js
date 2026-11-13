@@ -13,11 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * 2 Minimal Classic Color Design Theme Switcher (Classic Light vs Obsidian Dark)
+ * Theme Switcher (Classic Light vs Obsidian Dark)
  */
 function initThemeSwitcher() {
     const btn = document.getElementById('themeToggleBtn');
-    const label = document.getElementById('themeLabelText');
     if (!btn) return;
 
     // Retrieve saved theme or default to classic-light
@@ -33,9 +32,6 @@ function initThemeSwitcher() {
     function applyTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('taskflow_theme', theme);
-        if (label) {
-            label.textContent = theme === 'classic-light' ? 'Classic' : 'Obsidian';
-        }
     }
 }
 
