@@ -1,9 +1,10 @@
 /**
- * RTIH Task Tracker - Client Interaction Script
- * Manages modals, view toggles, AJAX status updates, and UI notifications.
+ * TaskFlow Interaction Script
+ * Manages 2 Classic Minimal Themes, Modals, Views, Quick Status, and Notifications.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    initThemeSwitcher();
     initViewSwitch();
     initSearchInput();
     initQuickStatusChanger();
@@ -12,7 +13,34 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Switch between Grid and Table View
+ * 2 Minimal Classic Color Design Theme Switcher (Classic Light vs Obsidian Dark)
+ */
+function initThemeSwitcher() {
+    const btn = document.getElementById('themeToggleBtn');
+    const label = document.getElementById('themeLabelText');
+    if (!btn) return;
+
+    // Retrieve saved theme or default to classic-light
+    const currentTheme = localStorage.getItem('taskflow_theme') || 'classic-light';
+    applyTheme(currentTheme);
+
+    btn.addEventListener('click', () => {
+        const activeTheme = document.documentElement.getAttribute('data-theme') || 'classic-light';
+        const newTheme = activeTheme === 'classic-light' ? 'classic-dark' : 'classic-light';
+        applyTheme(newTheme);
+    });
+
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('taskflow_theme', theme);
+        if (label) {
+            label.textContent = theme === 'classic-light' ? 'Classic' : 'Obsidian';
+        }
+    }
+}
+
+/**
+ * Switch between Card Grid and Table View
  */
 function initViewSwitch() {
     const gridView = document.getElementById('tasksGridView');
@@ -22,16 +50,17 @@ function initViewSwitch() {
 
     if (!gridView || !tableView || !btnGrid || !btnTable) return;
 
-    // Load saved view or default to 'grid'
     const savedView = localStorage.getItem('taskflow_view') || 'grid';
     setView(savedView);
 
-    btnGrid.addEventListener('click', () => {
+    btnGrid.addEventListener('click', (e) => {
+        e.stopPropagation();
         setView('grid');
         localStorage.setItem('taskflow_view', 'grid');
     });
 
-    btnTable.addEventListener('click', () => {
+    btnTable.addEventListener('click', (e) => {
+        e.stopPropagation();
         setView('table');
         localStorage.setItem('taskflow_view', 'table');
     });
@@ -52,7 +81,7 @@ function initViewSwitch() {
 }
 
 /**
- * Real-time Search input enhancements
+ * Search input clear button
  */
 function initSearchInput() {
     const searchInput = document.getElementById('taskSearchInput');
@@ -70,14 +99,13 @@ function initSearchInput() {
     clearBtn.addEventListener('click', () => {
         searchInput.value = '';
         toggleClear();
-        // Submit form to clear search filter
         const form = searchInput.closest('form');
         if (form) form.submit();
     });
 }
 
 /**
- * Modal Management: Open and Close helpers
+ * Open and Close Modals
  */
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
@@ -85,10 +113,9 @@ function openModal(modalId) {
     modal.classList.add('is-active');
     document.body.style.overflow = 'hidden';
 
-    // Focus first interactive element
     const firstInput = modal.querySelector('input:not([type="hidden"]), textarea, select');
     if (firstInput) {
-        setTimeout(() => firstInput.focus(), 100);
+        setTimeout(() => firstInput.focus(), 80);
     }
 }
 
@@ -108,8 +135,10 @@ document.addEventListener('click', (e) => {
 });
 
 /**
- * Open Edit Task Modal with populated details
+ * Open Task Details & Edit Modal
  */
+let currentLoadedTask = null;
+
 async function openEditTaskModal(taskId) {
     try {
         const res = await fetch(`api/task_details.php?id=${encodeURIComponent(taskId)}`, {
@@ -127,12 +156,32 @@ async function openEditTaskModal(taskId) {
         }
 
         const task = data.task;
+        currentLoadedTask = task;
+
         document.getElementById('editTaskId').value = task.id;
         document.getElementById('editTaskTitle').value = task.title;
         document.getElementById('editTaskDesc').value = task.description || '';
         document.getElementById('editTaskStatus').value = task.status;
         document.getElementById('editTaskPriority').value = task.priority || 'Medium';
         document.getElementById('editTaskDueDate').value = task.due_date || '';
+
+        // Update modal header badges
+        const idBadge = document.getElementById('editTaskIdBadge');
+        if (idBadge) idBadge.textContent = `TASK #${task.id}`;
+
+        const statusBadge = document.getElementById('editTaskStatusBadge');
+        if (statusBadge) {
+            let badgeClass = 'status-pending';
+            if (task.status === 'In Progress') badgeClass = 'status-in-progress';
+            if (task.status === 'Completed') badgeClass = 'status-completed';
+            statusBadge.innerHTML = `<span class="status-badge ${badgeClass}"><span class="badge-dot"></span>${escapeHtml(task.status)}</span>`;
+        }
+
+        const createdEl = document.getElementById('editTaskCreatedAt');
+        if (createdEl) createdEl.textContent = task.created_at || '—';
+
+        const updatedEl = document.getElementById('editTaskUpdatedAt');
+        if (updatedEl) updatedEl.textContent = task.updated_at || '—';
 
         openModal('modalEditTask');
     } catch (err) {
@@ -142,7 +191,18 @@ async function openEditTaskModal(taskId) {
 }
 
 /**
- * Open Confirm Delete Modal (Level 1 Requirement)
+ * Trigger deletion directly from within the Edit modal
+ */
+function triggerDeleteFromEditModal() {
+    if (!currentLoadedTask) return;
+    const taskId = currentLoadedTask.id;
+    const taskTitle = currentLoadedTask.title;
+    closeModal('modalEditTask');
+    confirmDeleteTask(taskId, taskTitle);
+}
+
+/**
+ * Open Confirm Delete Modal
  */
 function confirmDeleteTask(taskId, taskTitle) {
     const modal = document.getElementById('modalDeleteTask');
@@ -158,16 +218,17 @@ function confirmDeleteTask(taskId, taskTitle) {
 }
 
 /**
- * Instant Task Status Toggle (Level 2 Requirement)
+ * Instant Task Status Toggle via AJAX
  */
 function initQuickStatusChanger() {
     document.querySelectorAll('.quick-status-select').forEach(select => {
         select.addEventListener('change', async (e) => {
+            e.stopPropagation();
             const taskId = select.dataset.taskId;
             const newStatus = select.value;
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
             const originalStatus = select.dataset.currentStatus;
+
             select.disabled = true;
 
             try {
@@ -189,8 +250,7 @@ function initQuickStatusChanger() {
                 if (json.success) {
                     showToast('success', `Task #${taskId} moved to "${newStatus}".`);
                     select.dataset.currentStatus = newStatus;
-                    // Reload softly or update UI card styling
-                    setTimeout(() => window.location.reload(), 600);
+                    setTimeout(() => window.location.reload(), 450);
                 } else {
                     showToast('error', json.error || 'Failed to update status.');
                     select.value = originalStatus;
@@ -207,7 +267,7 @@ function initQuickStatusChanger() {
 }
 
 /**
- * Toast Notification Dispatcher
+ * Dispatch Toast Notification
  */
 function showToast(type, message) {
     let container = document.getElementById('toastContainer');
@@ -223,11 +283,11 @@ function showToast(type, message) {
     
     let iconSvg = '';
     if (type === 'success') {
-        iconSvg = '<svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        iconSvg = '<svg style="width:20px;height:20px;color:#10b981;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
     } else if (type === 'error') {
-        iconSvg = '<svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+        iconSvg = '<svg style="width:20px;height:20px;color:#ef4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
     } else {
-        iconSvg = '<svg class="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+        iconSvg = '<svg style="width:20px;height:20px;color:#3b82f6;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
     }
 
     toast.innerHTML = `
@@ -249,9 +309,6 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-/**
- * Auto-dismiss server-rendered flash messages
- */
 function initAutoDismissToasts() {
     document.querySelectorAll('.toast-card').forEach(toast => {
         setTimeout(() => {
@@ -260,9 +317,6 @@ function initAutoDismissToasts() {
     });
 }
 
-/**
- * Keyboard shortcuts (Escape key closes modals)
- */
 function initKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
@@ -274,9 +328,6 @@ function initKeyboardShortcuts() {
     });
 }
 
-/**
- * Frontend Validation Helper for Create & Edit Forms
- */
 function validateTaskForm(form) {
     const titleInput = form.querySelector('[name="title"]');
     if (!titleInput) return true;

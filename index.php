@@ -1,7 +1,8 @@
 <?php
 /**
- * RTIH Task Tracker - Main Task Dashboard
+ * Task Tracker - Main Task Dashboard
  * Complete implementation of Level 1, Level 2, Level 3, and Bonus features.
+ * Features 2 Classic Minimal Color Themes and Interactive Filter / View / Edit flows.
  */
 
 require_once __DIR__ . '/config/app.php';
@@ -26,7 +27,7 @@ $status    = trim($_GET['status'] ?? 'all');
 $priority  = trim($_GET['priority'] ?? 'all');
 $sort      = trim($_GET['sort'] ?? 'newest');
 $page      = max(1, (int)($_GET['page'] ?? 1));
-$perPage   = 6; // 6 tasks per page for clean grid card presentation
+$perPage   = 6; // 6 tasks per page for clean presentation
 
 // --------------------------------------------------------------------------
 // 2. Fetch KPI Metrics Summary (Bonus Feature 2)
@@ -147,15 +148,16 @@ require_once __DIR__ . '/includes/header.php';
 <main class="app-container" style="flex: 1; padding-bottom: 3rem;">
 
     <!-- =====================================================================
-         KPI Summary Cards (Bonus Feature 2)
+         KPI Summary Cards (Interactive Filters)
+         Clicking any KPI card filters tasks immediately
          ===================================================================== -->
     <section class="kpi-section" aria-label="Task Summary Statistics">
         <div class="kpi-grid">
-            <!-- Total Tasks -->
-            <div class="kpi-card">
+            <!-- Total Tasks Filter -->
+            <a href="<?= build_query_url(['status' => 'all', 'page' => 1]); ?>" class="kpi-card <?= $status === 'all' ? 'is-active-kpi' : ''; ?>" title="Click to view all tasks">
                 <div class="kpi-header">
                     <span class="kpi-label">Total Tasks</span>
-                    <div class="kpi-icon-wrapper" style="background: #eff6ff; color: #2563eb;">
+                    <div class="kpi-icon-wrapper" style="background: var(--primary-100); color: var(--primary-600);">
                         <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                     </div>
                 </div>
@@ -167,10 +169,11 @@ require_once __DIR__ . '/includes/header.php';
                     <span>Completion Rate</span>
                     <strong style="color: #10b981;"><?= $completionRate; ?>%</strong>
                 </div>
-            </div>
+                <div class="kpi-click-hint">Click to show all</div>
+            </a>
 
-            <!-- Pending -->
-            <div class="kpi-card">
+            <!-- Pending Filter -->
+            <a href="<?= build_query_url(['status' => 'Pending', 'page' => 1]); ?>" class="kpi-card <?= $status === 'Pending' ? 'is-active-kpi' : ''; ?>" title="Click to filter Pending tasks">
                 <div class="kpi-header">
                     <span class="kpi-label">Pending</span>
                     <div class="kpi-icon-wrapper" style="background: var(--pending-bg); color: var(--pending-text);">
@@ -181,10 +184,11 @@ require_once __DIR__ . '/includes/header.php';
                 <div style="font-size: 0.75rem; color: var(--pending-text); margin-top: 0.5rem; font-weight: 500;">
                     Awaiting commencement
                 </div>
-            </div>
+                <div class="kpi-click-hint">Click to filter pending</div>
+            </a>
 
-            <!-- In Progress -->
-            <div class="kpi-card">
+            <!-- In Progress Filter -->
+            <a href="<?= build_query_url(['status' => 'In Progress', 'page' => 1]); ?>" class="kpi-card <?= $status === 'In Progress' ? 'is-active-kpi' : ''; ?>" title="Click to filter In Progress tasks">
                 <div class="kpi-header">
                     <span class="kpi-label">In Progress</span>
                     <div class="kpi-icon-wrapper" style="background: var(--progress-bg); color: var(--progress-text);">
@@ -195,10 +199,11 @@ require_once __DIR__ . '/includes/header.php';
                 <div style="font-size: 0.75rem; color: var(--progress-text); margin-top: 0.5rem; font-weight: 500;">
                     Currently active
                 </div>
-            </div>
+                <div class="kpi-click-hint">Click to filter active</div>
+            </a>
 
-            <!-- Completed -->
-            <div class="kpi-card">
+            <!-- Completed Filter -->
+            <a href="<?= build_query_url(['status' => 'Completed', 'page' => 1]); ?>" class="kpi-card <?= $status === 'Completed' ? 'is-active-kpi' : ''; ?>" title="Click to filter Completed tasks">
                 <div class="kpi-header">
                     <span class="kpi-label">Completed</span>
                     <div class="kpi-icon-wrapper" style="background: var(--completed-bg); color: var(--completed-text);">
@@ -209,7 +214,8 @@ require_once __DIR__ . '/includes/header.php';
                 <div style="font-size: 0.75rem; color: var(--completed-text); margin-top: 0.5rem; font-weight: 500;">
                     Successfully delivered
                 </div>
-            </div>
+                <div class="kpi-click-hint">Click to filter completed</div>
+            </a>
         </div>
     </section>
 
@@ -218,7 +224,7 @@ require_once __DIR__ . '/includes/header.php';
          ===================================================================== -->
     <section class="toolbar-section">
         <div class="toolbar-card">
-            <!-- Left Side: Search Form -->
+            <!-- Left Side: Search & Filter Form -->
             <form action="index.php" method="GET" class="toolbar-left" id="searchFilterForm">
                 <input type="hidden" name="status" value="<?= e($status); ?>">
                 <input type="hidden" name="priority" value="<?= e($priority); ?>">
@@ -271,7 +277,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         </div>
 
-        <!-- Status Filter Tabs (Level 2 Requirement) -->
+        <!-- Status Filter Tabs with Counts -->
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 1rem; flex-wrap:wrap; gap:0.75rem;">
             <div class="filter-tabs">
                 <a href="<?= build_query_url(['status' => 'all', 'page' => 1]); ?>" class="filter-tab <?= $status === 'all' ? 'active' : ''; ?>">
@@ -303,6 +309,7 @@ require_once __DIR__ . '/includes/header.php';
 
     <!-- =====================================================================
          Task Listings: Card Grid View & Compact Table View
+         Clicking any task opens the View & Edit Modal
          ===================================================================== -->
     <?php if (empty($tasks)): ?>
         <div class="empty-state">
@@ -325,29 +332,46 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     <?php else: ?>
 
-        <!-- 1. GRID VIEW -->
+        <!-- 1. GRID VIEW (Clicking any card opens View & Edit modal) -->
         <div class="tasks-grid" id="tasksGridView">
             <?php foreach ($tasks as $task): ?>
-                <div class="task-card <?= $task['status'] === 'Completed' ? 'is-completed' : ''; ?>" id="taskCard-<?= $task['id']; ?>">
+                <div class="task-card <?= $task['status'] === 'Completed' ? 'is-completed' : ''; ?>" id="taskCard-<?= $task['id']; ?>" onclick="openEditTaskModal(<?= (int)$task['id']; ?>)" title="Click to view & edit task">
                     <div>
                         <div class="task-card-header">
-                            <h4 class="task-card-title"><?= e($task['title']); ?></h4>
-                            <?= priority_badge($task['priority'] ?? 'Medium'); ?>
+                            <h4 class="task-card-title">
+                                <?php if ($task['status'] === 'Completed'): ?>
+                                    <span class="completed-check-icon" title="Completed">
+                                        <svg style="width:16px;height:16px;color:#10b981;display:inline-block;vertical-align:-2px;margin-right:4px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                    </span>
+                                <?php endif; ?>
+                                <?= e($task['title']); ?>
+                            </h4>
+                            <div style="display:flex; align-items:center; gap:0.35rem;" onclick="event.stopPropagation()">
+                                <?= priority_badge($task['priority'] ?? 'Medium'); ?>
+                            </div>
                         </div>
 
                         <div class="task-card-meta">
-                            <!-- Quick Status Dropdown (Level 2 Requirement) -->
-                            <select class="quick-status-select" data-task-id="<?= $task['id']; ?>" data-current-status="<?= e($task['status']); ?>">
-                                <option value="Pending" <?= $task['status'] === 'Pending' ? 'selected' : ''; ?>>Pending</option>
-                                <option value="In Progress" <?= $task['status'] === 'In Progress' ? 'selected' : ''; ?>>In Progress</option>
-                                <option value="Completed" <?= $task['status'] === 'Completed' ? 'selected' : ''; ?>>Completed</option>
-                            </select>
+                            <!-- Quick Status Dropdown (Stops click propagation) -->
+                            <div onclick="event.stopPropagation()">
+                                <select class="quick-status-select" data-task-id="<?= $task['id']; ?>" data-current-status="<?= e($task['status']); ?>">
+                                    <option value="Pending" <?= $task['status'] === 'Pending' ? 'selected' : ''; ?>>Pending</option>
+                                    <option value="In Progress" <?= $task['status'] === 'In Progress' ? 'selected' : ''; ?>>In Progress</option>
+                                    <option value="Completed" <?= $task['status'] === 'Completed' ? 'selected' : ''; ?>>Completed</option>
+                                </select>
+                            </div>
 
                             <!-- Due Date Badge -->
                             <?= format_due_badge($task['due_date'], $task['status']); ?>
 
+                            <?php if ($task['status'] === 'Completed'): ?>
+                                <span class="completed-badge-pill">
+                                    ✓ Completed
+                                </span>
+                            <?php endif; ?>
+
                             <?php if ($isAdmin): ?>
-                                <span class="role-tag" style="background:#f1f5f9; color:#475569;" title="Owner: <?= e($task['owner_email']); ?>">
+                                <span class="role-tag" style="background:var(--bg-subtle); color:var(--text-secondary);" title="Owner: <?= e($task['owner_email']); ?>">
                                     <?= e($task['owner_name']); ?>
                                 </span>
                             <?php endif; ?>
@@ -359,11 +383,14 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
 
                     <div class="task-card-footer">
-                        <span>Created: <?= format_date($task['created_at']); ?></span>
+                        <span style="display:flex; align-items:center; gap:0.35rem;">
+                            <span style="font-size:0.75rem;">Created: <?= format_date($task['created_at']); ?></span>
+                            <span class="card-edit-hint">&bull; Click to edit</span>
+                        </span>
 
-                        <!-- Actions (Level 1: Edit & Delete with Confirmation) -->
-                        <div class="task-actions">
-                            <button type="button" class="btn-icon" onclick="openEditTaskModal(<?= (int)$task['id']; ?>)" title="Edit Task">
+                        <!-- Actions (Stops click propagation) -->
+                        <div class="task-actions" onclick="event.stopPropagation()">
+                            <button type="button" class="btn-icon" onclick="openEditTaskModal(<?= (int)$task['id']; ?>)" title="View & Edit Task">
                                 <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                             </button>
                             <button type="button" class="btn-icon" style="color:var(--danger-500);" onclick="confirmDeleteTask(<?= (int)$task['id']; ?>, '<?= e(addslashes($task['title'])); ?>')" title="Delete Task">
@@ -375,26 +402,26 @@ require_once __DIR__ . '/includes/header.php';
             <?php endforeach; ?>
         </div>
 
-        <!-- 2. TABLE VIEW (Alternate View Mode) -->
+        <!-- 2. TABLE VIEW (Clicking any row opens View & Edit modal) -->
         <div class="table-container" id="tasksTableView" style="display:none;">
             <table class="tasks-table">
                 <thead>
                     <tr>
-                        <th style="width:130px;">Status</th>
+                        <th style="width:140px;">Status</th>
                         <th>Task Title & Description</th>
-                        <th style="width:100px;">Priority</th>
-                        <th style="width:130px;">Due Date</th>
+                        <th style="width:110px;">Priority</th>
+                        <th style="width:140px;">Due Date</th>
                         <?php if ($isAdmin): ?>
                             <th style="width:130px;">Owner</th>
                         <?php endif; ?>
-                        <th style="width:120px;">Created</th>
+                        <th style="width:130px;">Created</th>
                         <th style="width:90px; text-align:right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($tasks as $task): ?>
-                        <tr>
-                            <td>
+                        <tr class="task-table-row <?= $task['status'] === 'Completed' ? 'is-completed-row' : ''; ?>" onclick="openEditTaskModal(<?= (int)$task['id']; ?>)" title="Click to view & edit task">
+                            <td onclick="event.stopPropagation()">
                                 <select class="quick-status-select" data-task-id="<?= $task['id']; ?>" data-current-status="<?= e($task['status']); ?>">
                                     <option value="Pending" <?= $task['status'] === 'Pending' ? 'selected' : ''; ?>>Pending</option>
                                     <option value="In Progress" <?= $task['status'] === 'In Progress' ? 'selected' : ''; ?>>In Progress</option>
@@ -402,7 +429,10 @@ require_once __DIR__ . '/includes/header.php';
                                 </select>
                             </td>
                             <td>
-                                <span class="table-task-title" style="<?= $task['status'] === 'Completed' ? 'text-decoration:line-through; color:var(--text-muted);' : ''; ?>">
+                                <span class="table-task-title <?= $task['status'] === 'Completed' ? 'table-task-completed' : ''; ?>">
+                                    <?php if ($task['status'] === 'Completed'): ?>
+                                        <svg style="width:14px;height:14px;color:#10b981;display:inline-block;vertical-align:-1px;margin-right:4px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                    <?php endif; ?>
                                     <?= e($task['title']); ?>
                                 </span>
                                 <?php if (!empty($task['description'])): ?>
@@ -411,7 +441,7 @@ require_once __DIR__ . '/includes/header.php';
                                     </small>
                                 <?php endif; ?>
                             </td>
-                            <td><?= priority_badge($task['priority'] ?? 'Medium'); ?></td>
+                            <td onclick="event.stopPropagation()"><?= priority_badge($task['priority'] ?? 'Medium'); ?></td>
                             <td><?= format_due_badge($task['due_date'], $task['status']); ?></td>
                             <?php if ($isAdmin): ?>
                                 <td>
@@ -419,9 +449,9 @@ require_once __DIR__ . '/includes/header.php';
                                 </td>
                             <?php endif; ?>
                             <td style="font-size:0.8rem; color:var(--text-muted);"><?= format_date($task['created_at']); ?></td>
-                            <td style="text-align:right;">
+                            <td style="text-align:right;" onclick="event.stopPropagation()">
                                 <div class="task-actions" style="justify-content:flex-end;">
-                                    <button type="button" class="btn-icon" onclick="openEditTaskModal(<?= (int)$task['id']; ?>)" title="Edit Task">
+                                    <button type="button" class="btn-icon" onclick="openEditTaskModal(<?= (int)$task['id']; ?>)" title="View & Edit Task">
                                         <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                     </button>
                                     <button type="button" class="btn-icon" style="color:var(--danger-500);" onclick="confirmDeleteTask(<?= (int)$task['id']; ?>, '<?= e(addslashes($task['title'])); ?>')" title="Delete Task">
@@ -445,19 +475,16 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
 
                 <nav class="pagination-nav" aria-label="Tasks pagination">
-                    <!-- Previous Page -->
                     <a href="<?= build_query_url(['page' => $page - 1]); ?>" class="page-btn <?= $page <= 1 ? 'disabled' : ''; ?>" aria-disabled="<?= $page <= 1 ? 'true' : 'false'; ?>">
                         &larr; Prev
                     </a>
 
-                    <!-- Page Numbers -->
                     <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                         <a href="<?= build_query_url(['page' => $i]); ?>" class="page-btn <?= $i === $page ? 'active' : ''; ?>">
                             <?= $i; ?>
                         </a>
                     <?php endfor; ?>
 
-                    <!-- Next Page -->
                     <a href="<?= build_query_url(['page' => $page + 1]); ?>" class="page-btn <?= $page >= $totalPages ? 'disabled' : ''; ?>" aria-disabled="<?= $page >= $totalPages ? 'true' : 'false'; ?>">
                         Next &rarr;
                     </a>
