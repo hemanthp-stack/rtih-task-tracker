@@ -1,94 +1,883 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="classic-light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; url=index.php">
-    <title>Task Tracker</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #090d16;
-            color: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 1.5rem;
-            box-sizing: border-box;
-        }
-        .redirect-card {
-            background: #111827;
-            border: 1px solid #1f293d;
-            border-radius: 16px;
-            max-width: 480px;
-            width: 100%;
-            padding: 2.5rem;
-            text-align: center;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-        }
-        .icon {
-            width: 52px;
-            height: 52px;
-            background: #2563eb;
-            border-radius: 12px;
-            margin: 0 auto 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 800;
-            font-size: 1.4rem;
-        }
-        h1 {
-            font-size: 1.4rem;
-            margin: 0 0 0.5rem;
-        }
-        p {
-            color: #94a3b8;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin: 0 0 1.5rem;
-        }
-        .btn {
-            display: inline-block;
-            background: #2563eb;
-            color: white;
-            padding: 0.75rem 1.75rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: background 0.2s;
-        }
-        .btn:hover {
-            background: #1d4ed8;
-        }
-        .tip {
-            margin-top: 1.5rem;
-            font-size: 0.78rem;
-            color: #64748b;
-            background: #090d16;
-            padding: 0.75rem;
-            border-radius: 8px;
-            border: 1px solid #1f293d;
-        }
-    </style>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Task Tracker · Personal Workspace</title>
+    
+    <!-- Script to prevent theme flashing on load -->
     <script>
-        // Automatic redirection to Task Tracker
-        window.location.replace("index.php");
+        (function() {
+            const savedTheme = localStorage.getItem('taskflow_theme') || 'classic-light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
     </script>
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="assets/css/app.css?v=1.1.0">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>">
 </head>
 <body>
-    <div class="redirect-card">
-        <div class="icon">✓</div>
-        <h1>Task Tracker</h1>
-        <p>Opening Task Tracker application...</p>
-        <a href="index.php" class="btn">Open Task Tracker</a>
-        <div class="tip">
-            💡 For local server execution, run <code>./run.sh</code> in terminal or open via XAMPP.
+
+<header class="app-header">
+    <div class="app-container">
+        <div class="header-inner">
+            <a href="index.html" class="brand-wrapper">
+                <div class="brand-logo-mark">
+                    <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">Task Tracker</span>
+                    <span class="brand-subtitle">Personal Workspace</span>
+                </div>
+            </a>
+
+            <div class="user-nav">
+                <!-- Theme Switcher (Icon Object Only) -->
+                <button type="button" class="theme-switcher-btn" id="themeToggleBtn" aria-label="Toggle Theme" title="Toggle Theme (Light / Dark)">
+                    <span class="theme-switcher-icon light-icon">
+                        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </span>
+                    <span class="theme-switcher-icon dark-icon">
+                        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </span>
+                </button>
+
+                <div class="user-pill">
+                    <div class="user-avatar" title="user@rtih.local">H</div>
+                    <span class="user-pill-name">Hemanth Kumar</span>
+                    <span class="role-tag role-user">USER</span>
+                </div>
+
+                <a href="https://github.com/hemanthp-stack/rtih-task-tracker" target="_blank" class="btn btn-secondary btn-sm" title="View Source on GitHub">
+                    <svg style="width:15px;height:15px;" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                    <span>GitHub</span>
+                </a>
+            </div>
         </div>
     </div>
+</header>
+
+<main class="app-container" style="flex: 1; padding-bottom: 3rem;">
+
+    <!-- =====================================================================
+         KPI Summary Cards (Interactive Filters)
+         ===================================================================== -->
+    <section class="kpi-section" aria-label="Task Summary Statistics">
+        <div class="kpi-grid">
+            <!-- Total Tasks Filter -->
+            <div class="kpi-card is-active-kpi" id="kpiCardAll" onclick="setKpiFilter('all')" title="Click to view all tasks">
+                <div class="kpi-header">
+                    <span class="kpi-label">Total Tasks</span>
+                    <div class="kpi-icon-wrapper" style="background: var(--primary-100); color: var(--primary-600);">
+                        <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    </div>
+                </div>
+                <div class="kpi-value" id="kpiTotalVal">6</div>
+                <div class="kpi-progress-bar">
+                    <div class="kpi-progress-fill" id="kpiProgressFill" style="width: 50%;"></div>
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; display:flex; justify-content:space-between;">
+                    <span>Completion Rate</span>
+                    <strong style="color: #10b981;" id="kpiRateVal">50%</strong>
+                </div>
+                <div class="kpi-click-hint">Click to show all</div>
+            </div>
+
+            <!-- Pending Filter -->
+            <div class="kpi-card" id="kpiCardPending" onclick="setKpiFilter('Pending')" title="Click to filter Pending tasks">
+                <div class="kpi-header">
+                    <span class="kpi-label">Pending</span>
+                    <div class="kpi-icon-wrapper" style="background: var(--pending-bg); color: var(--pending-text);">
+                        <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                </div>
+                <div class="kpi-value" id="kpiPendingVal">1</div>
+                <div style="font-size: 0.75rem; color: var(--pending-text); margin-top: 0.5rem; font-weight: 500;">
+                    Awaiting commencement
+                </div>
+                <div class="kpi-click-hint">Click to filter pending</div>
+            </div>
+
+            <!-- In Progress Filter -->
+            <div class="kpi-card" id="kpiCardInProgress" onclick="setKpiFilter('In Progress')" title="Click to filter In Progress tasks">
+                <div class="kpi-header">
+                    <span class="kpi-label">In Progress</span>
+                    <div class="kpi-icon-wrapper" style="background: var(--progress-bg); color: var(--progress-text);">
+                        <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                </div>
+                <div class="kpi-value" id="kpiProgressVal">2</div>
+                <div style="font-size: 0.75rem; color: var(--progress-text); margin-top: 0.5rem; font-weight: 500;">
+                    Currently active
+                </div>
+                <div class="kpi-click-hint">Click to filter active</div>
+            </div>
+
+            <!-- Completed Filter -->
+            <div class="kpi-card" id="kpiCardCompleted" onclick="setKpiFilter('Completed')" title="Click to filter Completed tasks">
+                <div class="kpi-header">
+                    <span class="kpi-label">Completed</span>
+                    <div class="kpi-icon-wrapper" style="background: var(--completed-bg); color: var(--completed-text);">
+                        <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                </div>
+                <div class="kpi-value" id="kpiCompletedVal">3</div>
+                <div style="font-size: 0.75rem; color: var(--completed-text); margin-top: 0.5rem; font-weight: 500;">
+                    Successfully delivered
+                </div>
+                <div class="kpi-click-hint">Click to filter completed</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         Toolbar: Search, Status Filters, View Toggle, & Add Action
+         ===================================================================== -->
+    <section class="toolbar-section">
+        <div class="toolbar-card">
+            <!-- Left Side: Search & Filter Controls -->
+            <div class="toolbar-left">
+                <div class="search-box">
+                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" id="taskSearchInput" class="search-input" placeholder="Search tasks by title..." oninput="applyFilters()">
+                    <button type="button" id="searchClearBtn" class="search-clear" onclick="clearSearch()" title="Clear search">&times;</button>
+                </div>
+
+                <!-- Priority Dropdown -->
+                <select id="priorityFilter" class="search-input" style="width:auto; padding-left:0.75rem;" onchange="applyFilters()">
+                    <option value="all">All Priorities</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+
+                <!-- Sort Order Dropdown -->
+                <select id="sortFilter" class="search-input" style="width:auto; padding-left:0.75rem;" onchange="applyFilters()">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="due_soon">Due Date (Soonest)</option>
+                    <option value="priority">Priority (Highest)</option>
+                    <option value="title">Alphabetical (A-Z)</option>
+                </select>
+            </div>
+
+            <!-- Right Side: View Switch & Create Task Button -->
+            <div class="toolbar-right">
+                <!-- View Mode Switcher -->
+                <div class="view-switch" role="group" aria-label="View Switcher">
+                    <button type="button" class="view-switch-btn active" id="viewBtnGrid" onclick="switchView('grid')" title="Card Grid View">
+                        <svg style="width:17px;height:17px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    </button>
+                    <button type="button" class="view-switch-btn" id="viewBtnTable" onclick="switchView('table')" title="Compact Table View">
+                        <svg style="width:17px;height:17px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Create Task Button -->
+                <button type="button" class="btn btn-primary" onclick="openModal('modalAddTask')">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                    <span>New Task</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Filter Tabs with Counts -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 1rem; flex-wrap:wrap; gap:0.75rem;">
+            <div class="filter-tabs">
+                <a href="javascript:void(0)" class="filter-tab active" id="tabAll" onclick="setKpiFilter('all')">
+                    All Tasks <span class="tab-count" id="tabCountAll">6</span>
+                </a>
+                <a href="javascript:void(0)" class="filter-tab" id="tabPending" onclick="setKpiFilter('Pending')">
+                    Pending <span class="tab-count" id="tabCountPending">1</span>
+                </a>
+                <a href="javascript:void(0)" class="filter-tab" id="tabProgress" onclick="setKpiFilter('In Progress')">
+                    In Progress <span class="tab-count" id="tabCountProgress">2</span>
+                </a>
+                <a href="javascript:void(0)" class="filter-tab" id="tabCompleted" onclick="setKpiFilter('Completed')">
+                    Completed <span class="tab-count" id="tabCountCompleted">3</span>
+                </a>
+            </div>
+
+            <div id="filterResultNotice" style="font-size:0.8125rem; color:var(--text-muted); display:none; align-items:center; gap:0.5rem;">
+                <span id="filteredCountText">Found 6 matching tasks</span>
+                <button type="button" class="btn btn-secondary btn-sm" style="padding:0.2rem 0.5rem;" onclick="resetAllFilters()">Reset</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Empty State Container -->
+    <div class="empty-state" id="emptyStateContainer" style="display:none;">
+        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+        </svg>
+        <h3 class="empty-title">No tasks found</h3>
+        <p class="empty-desc">No tasks match your current filter criteria.</p>
+        <button type="button" class="btn btn-secondary" onclick="resetAllFilters()">Reset Filters</button>
+    </div>
+
+    <!-- 1. GRID VIEW -->
+    <div class="tasks-grid" id="tasksGridView"></div>
+
+    <!-- 2. TABLE VIEW -->
+    <div class="table-container" id="tasksTableView" style="display:none;">
+        <table class="tasks-table">
+            <thead>
+                <tr>
+                    <th style="width:140px;">Status</th>
+                    <th>Task Title & Description</th>
+                    <th style="width:110px;">Priority</th>
+                    <th style="width:140px;">Due Date</th>
+                    <th style="width:130px;">Created</th>
+                    <th style="width:90px; text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tasksTableBody"></tbody>
+        </table>
+    </div>
+
+</main>
+
+<!-- =========================================================================
+     MODAL: Create New Task
+     ========================================================================= -->
+<div class="modal-overlay" id="modalAddTask" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+        <form onsubmit="handleCreateTask(event);">
+            <div class="modal-header">
+                <div>
+                    <h3 class="modal-title">Create New Task</h3>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.2rem;">Add a new milestone or action item</p>
+                </div>
+                <button type="button" class="modal-close" onclick="closeModal('modalAddTask')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label required" for="addTitle">Task Title</label>
+                    <input type="text" id="addTitle" class="form-control" placeholder="e.g. Design user interface mockups" required maxlength="255">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="addDesc">Description</label>
+                    <textarea id="addDesc" class="form-control" rows="3" placeholder="Provide background details or notes..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="addStatus">Status</label>
+                        <select id="addStatus" class="form-control">
+                            <option value="Pending" selected>Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="addPriority">Priority</label>
+                        <select id="addPriority" class="form-control">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="addDueDate">Target Due Date</label>
+                    <input type="date" id="addDueDate" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modalAddTask')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create Task</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =========================================================================
+     MODAL: View & Edit Task
+     ========================================================================= -->
+<div class="modal-overlay" id="modalEditTask" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+        <form onsubmit="handleSaveEditTask(event);">
+            <input type="hidden" id="editTaskId">
+            <div class="modal-header">
+                <div>
+                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                        <span class="role-tag" style="background:var(--primary-100); color:var(--primary-700); font-family:var(--font-mono);" id="editTaskIdBadge">TASK #</span>
+                        <span id="editTaskStatusBadge"></span>
+                    </div>
+                    <h3 class="modal-title" id="modalEditTitle">Task Details &amp; Edit</h3>
+                </div>
+                <button type="button" class="modal-close" onclick="closeModal('modalEditTask')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label required" for="editTaskTitle">Task Title</label>
+                    <input type="text" id="editTaskTitle" class="form-control" required maxlength="255">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editTaskDesc">Description</label>
+                    <textarea id="editTaskDesc" class="form-control" rows="3" placeholder="Add additional details or notes..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="editTaskStatus">Status</label>
+                        <select id="editTaskStatus" class="form-control">
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editTaskPriority">Priority</label>
+                        <select id="editTaskPriority" class="form-control">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="editTaskDueDate">Due Date</label>
+                        <input type="date" id="editTaskDueDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Timeline Metadata</label>
+                        <div style="font-size:0.78rem; color:var(--text-muted); padding:0.625rem 0.875rem; background:var(--bg-subtle); border:1px solid var(--border-light); border-radius:var(--radius-md);">
+                            <div>Created: <span id="editTaskCreatedAt">—</span></div>
+                            <div style="margin-top:0.2rem;">Updated: <span id="editTaskUpdatedAt">—</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+                <button type="button" class="btn btn-secondary btn-sm" style="color:var(--danger-500); border-color:#fecaca;" onclick="triggerDeleteCurrentTask()">
+                    <svg style="width:14px;height:14px;display:inline-block;vertical-align:-2px;margin-right:2px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Delete Task
+                </button>
+                <div style="display:flex; gap:0.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modalEditTask')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =========================================================================
+     MODAL: Confirm Delete
+     ========================================================================= -->
+<div class="modal-overlay" id="modalDeleteTask" role="dialog" aria-modal="true">
+    <div class="modal-dialog" style="max-width: 440px;">
+        <div class="modal-header" style="border-bottom-color: rgba(239, 68, 68, 0.2);">
+            <h3 class="modal-title" style="color: var(--danger-500); display:flex; align-items:center; gap:0.5rem;">
+                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                Confirm Deletion
+            </h3>
+            <button type="button" class="modal-close" onclick="closeModal('modalDeleteTask')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="color: var(--text-secondary); margin-bottom: 0.75rem;">Are you sure you want to permanently delete this task?</p>
+            <div style="background: var(--bg-subtle); border: 1px solid var(--border-light); padding: 0.75rem 1rem; border-radius: var(--radius-md); font-weight: 600; color: var(--text-primary); word-break: break-word;" id="deleteTaskTitleDisplay">
+                Task Title
+            </div>
+            <p style="color: var(--danger-500); font-size: 0.8125rem; margin-top: 0.75rem;">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('modalDeleteTask')">Cancel</button>
+            <button type="button" class="btn btn-danger" onclick="executeDeleteTask()">Yes, Delete Task</button>
+        </div>
+    </div>
+</div>
+
+<footer class="app-footer">
+    <div class="app-container">
+        <div class="footer-inner">
+            <div>
+                <strong>Task Tracker</strong> &mdash; Modern Task Management System
+                <span style="display:inline-block; margin-left:0.5rem; color:var(--text-subtle);">&bull;</span>
+                <span style="margin-left:0.5rem;">Professional Technical Work</span>
+            </div>
+            <div style="display:flex; align-items:center;" title="Operational">
+                <span class="badge-dot" style="background:#10b981;"></span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- Interactive Client-Side Engine (Guarantees 100% Functionality on GitHub Pages & Static Hosts) -->
+<script>
+// Initial seed tasks matching database.sql
+const DEFAULT_TASKS = [
+    {
+        id: 1,
+        title: "Implement PDO Database Connection",
+        description: "Set up secure PDO connectivity with utf8mb4 encoding, exception mode, and disabled emulate prepares.",
+        status: "Completed",
+        priority: "High",
+        due_date: "2026-11-14",
+        created_at: "Nov 10, 2026",
+        updated_at: "Nov 11, 2026"
+    },
+    {
+        id: 2,
+        title: "Build User Authentication Flow",
+        description: "Implement user registration, secure login with password_verify(), and session regeneration to prevent fixation.",
+        status: "Completed",
+        priority: "High",
+        due_date: "2026-11-15",
+        created_at: "Nov 11, 2026",
+        updated_at: "Nov 12, 2026"
+    },
+    {
+        id: 3,
+        title: "Design Responsive Task Dashboard",
+        description: "Develop a modern, distraction-free interface with quick status toggle, view switch (grid/table), and KPI metrics.",
+        status: "In Progress",
+        priority: "Urgent",
+        due_date: "2026-11-16",
+        created_at: "Nov 12, 2026",
+        updated_at: "Nov 13, 2026"
+    },
+    {
+        id: 4,
+        title: "Integrate CSRF and XSS Protections",
+        description: "Embed cryptographically secure CSRF tokens in state-changing operations and escape output with htmlspecialchars().",
+        status: "In Progress",
+        priority: "High",
+        due_date: "2026-11-17",
+        created_at: "Nov 12, 2026",
+        updated_at: "Nov 13, 2026"
+    },
+    {
+        id: 5,
+        title: "Implement Task Search and Filter Toolbar",
+        description: "Enable instant keyword search across task titles and filter views by Pending, In Progress, or Completed status.",
+        status: "Pending",
+        priority: "Medium",
+        due_date: "2026-11-18",
+        created_at: "Nov 13, 2026",
+        updated_at: "Nov 13, 2026"
+    },
+    {
+        id: 6,
+        title: "Prepare SQL Export & Documentation",
+        description: "Document database schema, backup and restore commands, and write up the testing checklist.",
+        status: "Completed",
+        priority: "Low",
+        due_date: "2026-11-20",
+        created_at: "Nov 13, 2026",
+        updated_at: "Nov 13, 2026"
+    }
+];
+
+let tasks = JSON.parse(localStorage.getItem('tasktracker_tasks')) || DEFAULT_TASKS;
+let activeStatusFilter = 'all';
+let currentEditingId = null;
+let currentDeletingId = null;
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    renderTasks();
+});
+
+function initTheme() {
+    const btn = document.getElementById('themeToggleBtn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+        const cur = document.documentElement.getAttribute('data-theme') || 'classic-light';
+        const next = cur === 'classic-light' ? 'classic-dark' : 'classic-light';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('taskflow_theme', next);
+    });
+}
+
+function saveTasks() {
+    localStorage.setItem('tasktracker_tasks', JSON.stringify(tasks));
+}
+
+function updateKPIs() {
+    const total = tasks.length;
+    const pending = tasks.filter(t => t.status === 'Pending').length;
+    const progress = tasks.filter(t => t.status === 'In Progress').length;
+    const completed = tasks.filter(t => t.status === 'Completed').length;
+    const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    document.getElementById('kpiTotalVal').textContent = total;
+    document.getElementById('kpiPendingVal').textContent = pending;
+    document.getElementById('kpiProgressVal').textContent = progress;
+    document.getElementById('kpiCompletedVal').textContent = completed;
+    document.getElementById('kpiRateVal').textContent = rate + '%';
+    document.getElementById('kpiProgressFill').style.width = rate + '%';
+
+    document.getElementById('tabCountAll').textContent = total;
+    document.getElementById('tabCountPending').textContent = pending;
+    document.getElementById('tabCountProgress').textContent = progress;
+    document.getElementById('tabCountCompleted').textContent = completed;
+
+    // Highlight active KPI card
+    document.querySelectorAll('.kpi-card').forEach(card => card.classList.remove('is-active-kpi'));
+    if (activeStatusFilter === 'all') document.getElementById('kpiCardAll').classList.add('is-active-kpi');
+    if (activeStatusFilter === 'Pending') document.getElementById('kpiCardPending').classList.add('is-active-kpi');
+    if (activeStatusFilter === 'In Progress') document.getElementById('kpiCardInProgress').classList.add('is-active-kpi');
+    if (activeStatusFilter === 'Completed') document.getElementById('kpiCardCompleted').classList.add('is-active-kpi');
+
+    // Highlight active Tab
+    document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+    if (activeStatusFilter === 'all') document.getElementById('tabAll').classList.add('active');
+    if (activeStatusFilter === 'Pending') document.getElementById('tabPending').classList.add('active');
+    if (activeStatusFilter === 'In Progress') document.getElementById('tabProgress').classList.add('active');
+    if (activeStatusFilter === 'Completed') document.getElementById('tabCompleted').classList.add('active');
+}
+
+function setKpiFilter(status) {
+    activeStatusFilter = status;
+    applyFilters();
+}
+
+function applyFilters() {
+    updateKPIs();
+    renderTasks();
+}
+
+function clearSearch() {
+    document.getElementById('taskSearchInput').value = '';
+    applyFilters();
+}
+
+function resetAllFilters() {
+    activeStatusFilter = 'all';
+    document.getElementById('taskSearchInput').value = '';
+    document.getElementById('priorityFilter').value = 'all';
+    document.getElementById('sortFilter').value = 'newest';
+    applyFilters();
+}
+
+function switchView(mode) {
+    const grid = document.getElementById('tasksGridView');
+    const table = document.getElementById('tasksTableView');
+    const btnGrid = document.getElementById('viewBtnGrid');
+    const btnTable = document.getElementById('viewBtnTable');
+
+    if (mode === 'table') {
+        grid.style.display = 'none';
+        table.style.display = 'block';
+        btnTable.classList.add('active');
+        btnGrid.classList.remove('active');
+    } else {
+        grid.style.display = 'grid';
+        table.style.display = 'none';
+        btnGrid.classList.add('active');
+        btnTable.classList.remove('active');
+    }
+}
+
+function renderTasks() {
+    updateKPIs();
+    const search = document.getElementById('taskSearchInput').value.trim().toLowerCase();
+    const priority = document.getElementById('priorityFilter').value;
+    const sort = document.getElementById('sortFilter').value;
+
+    let filtered = tasks.filter(t => {
+        const matchesStatus = (activeStatusFilter === 'all') || (t.status === activeStatusFilter);
+        const matchesSearch = !search || t.title.toLowerCase().includes(search) || (t.description && t.description.toLowerCase().includes(search));
+        const matchesPriority = (priority === 'all') || (t.priority === priority);
+        return matchesStatus && matchesSearch && matchesPriority;
+    });
+
+    // Sorting
+    filtered.sort((a, b) => {
+        if (sort === 'oldest') return a.id - b.id;
+        if (sort === 'title') return a.title.localeCompare(b.title);
+        if (sort === 'priority') {
+            const pMap = { 'Urgent': 1, 'High': 2, 'Medium': 3, 'Low': 4 };
+            return (pMap[a.priority] || 5) - (pMap[b.priority] || 5);
+        }
+        if (sort === 'due_soon') {
+            if (!a.due_date) return 1;
+            if (!b.due_date) return -1;
+            return new Date(a.due_date) - new Date(b.due_date);
+        }
+        return b.id - a.id; // Newest first
+    });
+
+    const gridContainer = document.getElementById('tasksGridView');
+    const tableBody = document.getElementById('tasksTableBody');
+    const emptyState = document.getElementById('emptyStateContainer');
+    const notice = document.getElementById('filterResultNotice');
+
+    if (filtered.length === 0) {
+        gridContainer.style.display = 'none';
+        document.getElementById('tasksTableView').style.display = 'none';
+        emptyState.style.display = 'block';
+    } else {
+        emptyState.style.display = 'none';
+        const isTable = document.getElementById('viewBtnTable').classList.contains('active');
+        gridContainer.style.display = isTable ? 'none' : 'grid';
+        document.getElementById('tasksTableView').style.display = isTable ? 'block' : 'none';
+    }
+
+    if (search || activeStatusFilter !== 'all' || priority !== 'all') {
+        notice.style.display = 'flex';
+        document.getElementById('filteredCountText').textContent = `Found ${filtered.length} matching tasks`;
+    } else {
+        notice.style.display = 'none';
+    }
+
+    // Render Grid Cards
+    gridContainer.innerHTML = filtered.map(t => {
+        const isCompleted = t.status === 'Completed';
+        return `
+        <div class="task-card ${isCompleted ? 'is-completed' : ''}" onclick="openEditTaskModal(${t.id})">
+            <div>
+                <div class="task-card-header">
+                    <h4 class="task-card-title">
+                        ${isCompleted ? '<svg style="width:16px;height:16px;color:#10b981;display:inline-block;vertical-align:-2px;margin-right:4px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>' : ''}
+                        ${escapeHtml(t.title)}
+                    </h4>
+                    <div onclick="event.stopPropagation()">
+                        <span class="priority-badge priority-${t.priority.toLowerCase()}">${t.priority}</span>
+                    </div>
+                </div>
+
+                <div class="task-card-meta">
+                    <div onclick="event.stopPropagation()">
+                        <select class="quick-status-select" onchange="changeTaskStatus(${t.id}, this.value)">
+                            <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                            <option value="Completed" ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                    </div>
+
+                    ${formatDueBadge(t.due_date, t.status)}
+
+                    ${isCompleted ? '<span class="completed-badge-pill">✓ Completed</span>' : ''}
+                </div>
+
+                <div class="task-card-body">
+                    <p class="task-card-desc">${t.description ? escapeHtml(t.description) : '<span style="color:var(--text-subtle); font-style:italic;">No description provided</span>'}</p>
+                </div>
+            </div>
+
+            <div class="task-card-footer">
+                <span style="display:flex; align-items:center; gap:0.35rem;">
+                    <span style="font-size:0.75rem;">Created: ${t.created_at}</span>
+                    <span class="card-edit-hint">&bull; Click to edit</span>
+                </span>
+
+                <div class="task-actions" onclick="event.stopPropagation()">
+                    <button type="button" class="btn-icon" onclick="openEditTaskModal(${t.id})" title="View & Edit Task">
+                        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                    </button>
+                    <button type="button" class="btn-icon" style="color:var(--danger-500);" onclick="confirmDeleteTask(${t.id})" title="Delete Task">
+                        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        `;
+    }).join('');
+
+    // Render Table Rows
+    tableBody.innerHTML = filtered.map(t => {
+        const isCompleted = t.status === 'Completed';
+        return `
+        <tr class="task-table-row ${isCompleted ? 'is-completed-row' : ''}" onclick="openEditTaskModal(${t.id})">
+            <td onclick="event.stopPropagation()">
+                <select class="quick-status-select" onchange="changeTaskStatus(${t.id}, this.value)">
+                    <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                    <option value="In Progress" ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                    <option value="Completed" ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                </select>
+            </td>
+            <td>
+                <span class="table-task-title ${isCompleted ? 'table-task-completed' : ''}">
+                    ${isCompleted ? '<svg style="width:14px;height:14px;color:#10b981;display:inline-block;vertical-align:-1px;margin-right:4px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>' : ''}
+                    ${escapeHtml(t.title)}
+                </span>
+                ${t.description ? `<small style="color:var(--text-muted); display:block; margin-top:0.2rem; max-width:480px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(t.description)}</small>` : ''}
+            </td>
+            <td onclick="event.stopPropagation()"><span class="priority-badge priority-${t.priority.toLowerCase()}">${t.priority}</span></td>
+            <td>${formatDueBadge(t.due_date, t.status)}</td>
+            <td style="font-size:0.8rem; color:var(--text-muted);">${t.created_at}</td>
+            <td style="text-align:right;" onclick="event.stopPropagation()">
+                <div class="task-actions" style="justify-content:flex-end;">
+                    <button type="button" class="btn-icon" onclick="openEditTaskModal(${t.id})" title="View & Edit Task">
+                        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                    </button>
+                    <button type="button" class="btn-icon" style="color:var(--danger-500);" onclick="confirmDeleteTask(${t.id})" title="Delete Task">
+                        <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        `;
+    }).join('');
+}
+
+function formatDueBadge(dateStr, status) {
+    if (!dateStr) return '<span class="text-xs text-slate-400">No due date</span>';
+    if (status === 'Completed') return `<span class="due-pill due-completed"><svg class="w-3.5 h-3.5 mr-1 inline" style="width:14px;height:14px;display:inline-block;vertical-align:-2px;margin-right:2px;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>${dateStr}</span>`;
+    return `<span class="due-pill due-normal">${dateStr}</span>`;
+}
+
+function changeTaskStatus(id, newStatus) {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+    task.status = newStatus;
+    task.updated_at = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    saveTasks();
+    showToast('success', `Task #${id} moved to "${newStatus}".`);
+    renderTasks();
+}
+
+function handleCreateTask(e) {
+    e.preventDefault();
+    const title = document.getElementById('addTitle').value.trim();
+    if (!title || title.length < 2) {
+        showToast('error', 'Task title must be at least 2 characters.');
+        return;
+    }
+
+    const newTask = {
+        id: tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1,
+        title: title,
+        description: document.getElementById('addDesc').value.trim(),
+        status: document.getElementById('addStatus').value,
+        priority: document.getElementById('addPriority').value,
+        due_date: document.getElementById('addDueDate').value || null,
+        created_at: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
+        updated_at: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
+    };
+
+    tasks.unshift(newTask);
+    saveTasks();
+    closeModal('modalAddTask');
+    document.getElementById('addTitle').value = '';
+    document.getElementById('addDesc').value = '';
+    showToast('success', `Task "${newTask.title}" created successfully.`);
+    renderTasks();
+}
+
+function openEditTaskModal(id) {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+    currentEditingId = id;
+
+    document.getElementById('editTaskId').value = task.id;
+    document.getElementById('editTaskTitle').value = task.title;
+    document.getElementById('editTaskDesc').value = task.description || '';
+    document.getElementById('editTaskStatus').value = task.status;
+    document.getElementById('editTaskPriority').value = task.priority;
+    document.getElementById('editTaskDueDate').value = task.due_date || '';
+
+    document.getElementById('editTaskIdBadge').textContent = `TASK #${task.id}`;
+    let badgeClass = task.status === 'In Progress' ? 'status-in-progress' : (task.status === 'Completed' ? 'status-completed' : 'status-pending');
+    document.getElementById('editTaskStatusBadge').innerHTML = `<span class="status-badge ${badgeClass}"><span class="badge-dot"></span>${task.status}</span>`;
+    document.getElementById('editTaskCreatedAt').textContent = task.created_at;
+    document.getElementById('editTaskUpdatedAt').textContent = task.updated_at;
+
+    openModal('modalEditTask');
+}
+
+function handleSaveEditTask(e) {
+    e.preventDefault();
+    const task = tasks.find(t => t.id === currentEditingId);
+    if (!task) return;
+
+    const title = document.getElementById('editTaskTitle').value.trim();
+    if (!title || title.length < 2) {
+        showToast('error', 'Task title must be at least 2 characters.');
+        return;
+    }
+
+    task.title = title;
+    task.description = document.getElementById('editTaskDesc').value.trim();
+    task.status = document.getElementById('editTaskStatus').value;
+    task.priority = document.getElementById('editTaskPriority').value;
+    task.due_date = document.getElementById('editTaskDueDate').value || null;
+    task.updated_at = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+    saveTasks();
+    closeModal('modalEditTask');
+    showToast('success', `Task "${task.title}" updated successfully.`);
+    renderTasks();
+}
+
+function triggerDeleteCurrentTask() {
+    closeModal('modalEditTask');
+    confirmDeleteTask(currentEditingId);
+}
+
+function confirmDeleteTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+    currentDeletingId = id;
+    document.getElementById('deleteTaskTitleDisplay').textContent = task.title;
+    openModal('modalDeleteTask');
+}
+
+function executeDeleteTask() {
+    const idx = tasks.findIndex(t => t.id === currentDeletingId);
+    if (idx !== -1) {
+        const deleted = tasks.splice(idx, 1)[0];
+        saveTasks();
+        showToast('success', `Task "${deleted.title}" was permanently deleted.`);
+        renderTasks();
+    }
+    closeModal('modalDeleteTask');
+}
+
+function openModal(id) {
+    const m = document.getElementById(id);
+    if (m) m.classList.add('is-active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+    const m = document.getElementById(id);
+    if (m) m.classList.remove('is-active');
+    document.body.style.overflow = '';
+}
+
+function showToast(type, msg) {
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast-card toast-${type}`;
+    t.innerHTML = `<div class="toast-body">${escapeHtml(msg)}</div><button type="button" class="toast-close" onclick="this.parentElement.remove()">&times;</button>`;
+    c.appendChild(t);
+    setTimeout(() => { if (t.parentElement) t.remove(); }, 4000);
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+}
+</script>
+
 </body>
 </html>
