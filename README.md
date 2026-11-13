@@ -1,14 +1,14 @@
-# RTIH Task Tracker (TaskFlow)
+# Task Tracker
 > **Technical Assignment — Intern (IT)**  
-> **Organization:** Ratan Tata Innovation Hub Amaravati Foundation  
 > **Candidate:** Hemanth Kumar  
+> **Repository:** https://github.com/hemanthp-stack/rtih-task-tracker  
 > **Submission Date:** November 2026  
 
 ---
 
 ## 📋 Executive Overview
 
-**TaskFlow** is a secure, responsive, full-stack Task Tracker web application engineered with **Vanilla PHP 8** and **MySQL (InnoDB / PDO)**. Developed specifically for the **RTIH IT Internship Evaluation**, it demonstrates modern engineering standards, robust server-side security architectures, role-based access control, and a bespoke, human-crafted productivity interface.
+**Task Tracker** is a secure, responsive, full-stack Task Tracker web application engineered with **Vanilla PHP 8** and **MySQL (InnoDB / PDO)**. Developed specifically for the **Technical Internship Evaluation**, it demonstrates modern engineering standards, robust server-side security architectures, role-based access control, and a bespoke, human-crafted productivity interface.
 
 The application has been completed through all three prescribed levels and implements all optional bonus features:
 - **Level 1 — Basic Task Management:** Complete CRUD workflow, dynamic status feedback, modal confirmation on task deletion.
@@ -105,9 +105,9 @@ cd "/Users/hemanth/Desktop/RTIH PROJECT"
 ./run.sh
 
 # Or start directly using PHP's built-in web server:
-php -S 127.0.0.1:8000
+php -S localhost:8000
 ```
-Then visit **`http://127.0.0.1:8000`** in any web browser.
+Then visit **`http://localhost:8000`** in any web browser.
 
 > **Note on Database Portability:** If MySQL is not actively running during testing, `config/database.php` automatically falls back to an embedded SQLite datastore (`data/database.sqlite`) seeded with the identical schema and demo tasks. This guarantees seamless immediate evaluation under any testing environment!
 

@@ -16,8 +16,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Application Constants (Removed organization name as requested)
-define('APP_NAME', 'TaskFlow');
+// Application Constants (Updated to Task Tracker)
+define('APP_NAME', 'Task Tracker');
 define('APP_TAGLINE', 'Professional Task Management');
 define('APP_VERSION', '1.1.0');
 

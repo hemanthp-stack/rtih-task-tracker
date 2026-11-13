@@ -19,11 +19,10 @@ else
 fi
 
 PORT=8000
-HOST="127.0.0.1"
+HOST="localhost"
 
 echo "============================================================"
-echo "  🚀 RTIH Task Tracker (TaskFlow) - Development Server"
-echo "  Organization: Ratan Tata Innovation Hub Amaravati Foundation"
+echo "  🚀 Task Tracker - Development Server"
 echo "============================================================"
 echo ""
 echo "  📍 Local Server URL : http://$HOST:$PORT"

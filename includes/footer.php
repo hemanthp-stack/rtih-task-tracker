@@ -182,7 +182,7 @@ require_once __DIR__ . '/../includes/flash.php';
     <div class="app-container">
         <div class="footer-inner">
             <div>
-                <strong>TaskFlow</strong> &mdash; Modern Task Management System
+                <strong>Task Tracker</strong> &mdash; Modern Task Management System
                 <span style="display:inline-block; margin-left:0.5rem; color:var(--text-subtle);">&bull;</span>
                 <span style="margin-left:0.5rem;">Professional Technical Work</span>
             </div>

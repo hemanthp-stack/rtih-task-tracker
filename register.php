@@ -92,11 +92,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Create initial welcome task
                 $welcomeStmt = $pdo->prepare("
                     INSERT INTO tasks (user_id, title, description, status, priority, due_date, created_at)
-                    VALUES (:user_id, 'Welcome to TaskFlow! 🎉', 'Explore the dashboard by trying out search filters, changing task status, or adding your first project milestone.', 'In Progress', 'High', CURRENT_DATE, CURRENT_TIMESTAMP)
+                    VALUES (:user_id, 'Welcome to Task Tracker! 🎉', 'Explore the dashboard by trying out search filters, changing task status, or adding your first project milestone.', 'In Progress', 'High', CURRENT_DATE, CURRENT_TIMESTAMP)
                 ");
                 $welcomeStmt->execute([':user_id' => $newUserId]);
 
-                set_flash('success', 'Your account has been created successfully! Welcome to TaskFlow.');
+                set_flash('success', 'Your account has been created successfully! Welcome to Task Tracker.');
                 header('Location: index.php');
                 exit;
 
