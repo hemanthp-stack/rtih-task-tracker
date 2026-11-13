@@ -1,0 +1,10 @@
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# SQLite local testing cache (MySQL schema is preserved in database.sql)
+data/database.sqlite*
+
+# Logs & temp files
+*.log
+/tmp/
